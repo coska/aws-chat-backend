@@ -56,7 +56,12 @@ public class UserService {
     }
 
     public UserDto findById(final String id) {
-        return mapper.toDto(repository.get(id));
+        User found = repository.get(id);
+        if (found == null) {
+            throw new NotFoundException(id);
+        }
+
+        return mapper.toDto(found);
     }
 
     public UserDto update(final UserDto dto) {
@@ -80,7 +85,7 @@ public class UserService {
     public void delete(String userId) {
         final User user = repository.get(userId);
         if (user == null) {
-            throw new NotFoundException("User");
+            throw new NotFoundException(userId);
         }
         repository.delete(user);
     }

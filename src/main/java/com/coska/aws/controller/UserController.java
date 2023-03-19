@@ -16,7 +16,7 @@ import java.util.*;
 import org.apache.commons.lang3.StringUtils;
 
 @RestController
-@RequestMapping(value = "/user")
+@RequestMapping(value = "/v1/chat/users")
 public class UserController {
 
     private static final Logger logger = LogManager.getLogger(UserController.class);
@@ -26,7 +26,7 @@ public class UserController {
         this.service = us;
     }
 
-    @PostMapping("/create")
+    @PostMapping()
     public @ResponseBody UserDto create(final HttpServletRequest request, @RequestBody final UserDto dto) {
         final String str = dto.validate();
         if (StringUtils.isNotEmpty(str)) {
@@ -36,7 +36,7 @@ public class UserController {
         return service.create(dto);
     }
 
-    @PutMapping("/update")
+    @PutMapping()
     public @ResponseBody UserDto update(final HttpServletRequest request, final Principal principal, @RequestBody final UserDto dto) {
         final String str = dto.validate();
         if (StringUtils.isNotEmpty(str)) {
