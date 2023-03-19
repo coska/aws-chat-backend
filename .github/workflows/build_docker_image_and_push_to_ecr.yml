@@ -7,7 +7,6 @@ on:
       - main
   push:
     branches:
-      - develop
       - main
 
 jobs:
