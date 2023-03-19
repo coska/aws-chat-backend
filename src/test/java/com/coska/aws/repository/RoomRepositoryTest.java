@@ -1,6 +1,8 @@
 package com.coska.aws.repository;
 
 import com.coska.aws.config.DynamoDBTestConfiguration;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -11,6 +13,7 @@ import org.springframework.test.context.ActiveProfiles;
 @SpringBootTest
 @ActiveProfiles("test")
 public class RoomRepositoryTest {
+    private static final Logger logger = LogManager.getLogger(RoomRepositoryTest.class);
 //    @Autowired
 //    private RoomRepository repository;
 
@@ -19,7 +22,7 @@ public class RoomRepositoryTest {
 
     @BeforeEach
     public void initDataModel() {
-        System.out.println("Initialize Room DataModel");
+        logger.debug("Initialize Room DataModel");
         dynamoDBTestConfiguration.dynamoDBRoomSetup();
 
         // in case previous testing didn't clean up
@@ -27,7 +30,7 @@ public class RoomRepositoryTest {
 
     @AfterEach
     public void verifyEmptyDatabase() {
-        System.out.println("Room Item Count: " + dynamoDBTestConfiguration.getRoomItemCount());
+        logger.debug("Room Item Count: " + dynamoDBTestConfiguration.getRoomItemCount());
     }
 
     @Test

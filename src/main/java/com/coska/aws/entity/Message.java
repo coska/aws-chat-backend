@@ -19,10 +19,10 @@ import java.util.List;
 @SuppressWarnings("unused")
 public class Message {
     // PK
-    @DynamoDBHashKey(attributeName = "id")
+    @DynamoDBRangeKey(attributeName = "id")
     private String id;
 
-    @DynamoDBAttribute(attributeName = "roomId")
+    @DynamoDBHashKey(attributeName = "roomId")
     private String roomId;
 
     @DynamoDBAttribute(attributeName = "senderId")
@@ -39,21 +39,21 @@ public class Message {
     @DynamoDBTyped(DynamoDBMapperFieldModel.DynamoDBAttributeType.N)
     private ZonedDateTime timestamp;
 
-    @DynamoDBIndexHashKey(attributeName = "GSI_1_PK", globalSecondaryIndexName = "GSI_1")
-    public String getGSI1PK() {
-        return roomId;
-    }
-
-    public void setGSI1PK(String pk) {
-        // intentionally left blank
-    }
-
-    @DynamoDBIndexRangeKey( attributeName = "GSI_1_SK", globalSecondaryIndexName = "GSI_1")
-    public String getGSI1SK() {
-        return id;
-    }
-
-    public void setGSI1SK(String sk) {
-        // intentionally left blank
-    }
+//    @DynamoDBIndexHashKey(attributeName = "GSI_1_PK", globalSecondaryIndexName = "GSI_1")
+//    public String getGSI1PK() {
+//        return roomId;
+//    }
+//
+//    public void setGSI1PK(String pk) {
+//        // intentionally left blank
+//    }
+//
+//    @DynamoDBIndexRangeKey( attributeName = "GSI_1_SK", globalSecondaryIndexName = "GSI_1")
+//    public String getGSI1SK() {
+//        return id;
+//    }
+//
+//    public void setGSI1SK(String sk) {
+//        // intentionally left blank
+//    }
 }

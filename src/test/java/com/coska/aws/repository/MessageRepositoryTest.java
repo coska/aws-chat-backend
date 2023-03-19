@@ -1,6 +1,8 @@
 package com.coska.aws.repository;
 
 import com.coska.aws.config.DynamoDBTestConfiguration;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -11,6 +13,8 @@ import org.springframework.test.context.ActiveProfiles;
 @SpringBootTest
 @ActiveProfiles("test")
 public class MessageRepositoryTest {
+    private static final Logger logger = LogManager.getLogger(MessageRepositoryTest.class);
+
 //    @Autowired
 //    private MessageRepository repository;
 
@@ -27,7 +31,7 @@ public class MessageRepositoryTest {
 
     @AfterEach
     public void verifyEmptyDatabase() {
-        System.out.println("Message Item Count: " + dynamoDBTestConfiguration.getMessageItemCount());
+        logger.debug("Message Item Count: " + dynamoDBTestConfiguration.getMessageItemCount());
     }
 
     @Test

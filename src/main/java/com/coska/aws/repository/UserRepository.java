@@ -1,19 +1,11 @@
 package com.coska.aws.repository;
 
-import com.amazonaws.services.dynamodbv2.datamodeling.PaginatedQueryList;
-import com.amazonaws.services.dynamodbv2.model.AttributeValue;
-import com.coska.aws.exception.NotFoundException;
 import com.coska.aws.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
 
 @Repository
 public class UserRepository {
@@ -43,7 +35,15 @@ public class UserRepository {
         return dynamoRepository.get(User.class, pk);
     }
 
+    public User find(final User user) {
+        return get(user.getId());
+    }
+
     public void delete(final String pk) {
         dynamoRepository.delete(User.class, pk);
+    }
+
+    public void delete(final User user) {
+        dynamoRepository.delete(User.class, user.getId());
     }
 }

@@ -2,6 +2,8 @@ package com.coska.aws.repository;
 
 import com.coska.aws.entity.User;
 import com.coska.aws.config.DynamoDBTestConfiguration;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 @ActiveProfiles("test")
 public class UserRepositoryTest {
+    private static final Logger logger = LogManager.getLogger(UserRepositoryTest.class);
     @Autowired
     private UserRepository repository;
 
@@ -28,15 +31,19 @@ public class UserRepositoryTest {
 
     @BeforeEach
     public void initDataModel() {
-        System.out.println("Initialize User DataModel");
+        logger.debug("Initialize User DataModel");
         dynamoDBTestConfiguration.dynamoDBUserSetup();
 
         // in case previous testing didn't clean up
+        List<User> users =  repository.findAll();
+        for(User user : users) {
+            repository.delete(user.getId());
+        }
     }
 
     @AfterEach
     public void verifyEmptyDatabase() {
-        System.out.println("User Item Count: " + dynamoDBTestConfiguration.getUserItemCount());
+        logger.debug("User Item Count: " + dynamoDBTestConfiguration.getUserItemCount());
     }
 
     @Test
@@ -56,7 +63,7 @@ public class UserRepositoryTest {
             assertNotNull(saved);
             users.add(user);
         }
-        System.out.println("User Item Count: " + dynamoDBTestConfiguration.getUserItemCount());
+        logger.debug("User Item Count: " + dynamoDBTestConfiguration.getUserItemCount());
 
         assertEquals(3, users.size());
 
@@ -64,14 +71,14 @@ public class UserRepositoryTest {
         for(int i = 0; i < 3; i++) {
             User found = repository.get("user" + i);
             assertNotNull(found);
-            System.out.println("Get User: " + found);
+            logger.debug("Get User: " + found);
         }
 
         // Test findAll()
         List<User> users1 =  repository.findAll();
         assertEquals(3, users1.size());
         for(User user : users1) {
-            System.out.println("findAll User: " + user);
+            logger.debug("findAll User: " + user);
             repository.delete(user.getId());
         }
     }

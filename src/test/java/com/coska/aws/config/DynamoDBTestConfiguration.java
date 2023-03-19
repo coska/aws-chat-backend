@@ -9,6 +9,8 @@ import com.amazonaws.services.dynamodbv2.model.ProjectionType;
 import com.coska.aws.entity.User;
 import com.coska.aws.entity.Room;
 import com.coska.aws.entity.Message;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 
@@ -16,6 +18,7 @@ import java.util.List;
 
 @Configuration
 public class DynamoDBTestConfiguration {
+    private static final Logger logger = LogManager.getLogger(DynamoDBTestConfiguration.class);
 
     @Autowired
     private AmazonDynamoDB amazonDynamoDB;
@@ -26,9 +29,9 @@ public class DynamoDBTestConfiguration {
     public void dynamoDBUserSetup() {
         try {
             ListTablesResult tablesResult = amazonDynamoDB.listTables();
-            System.out.println("TableNames: " + tablesResult.getTableNames());
+            logger.debug("TableNames: " + tablesResult.getTableNames());
             if (!tablesResult.getTableNames().contains("User")) {
-                System.out.println("Create User Table");
+                logger.debug("Create User Table");
                 dynamoDBMapper = new DynamoDBMapper(amazonDynamoDB);
                 CreateTableRequest tableRequest = dynamoDBMapper.generateCreateTableRequest(User.class);
                 tableRequest.setProvisionedThroughput(new ProvisionedThroughput(5L, 5L));
@@ -47,9 +50,9 @@ public class DynamoDBTestConfiguration {
     public void dynamoDBRoomSetup() {
         try {
             ListTablesResult tablesResult = amazonDynamoDB.listTables();
-            System.out.println("TableNames: " + tablesResult.getTableNames());
+            logger.debug("TableNames: " + tablesResult.getTableNames());
             if (!tablesResult.getTableNames().contains("Room")) {
-                System.out.println("Create Room Table");
+                logger.debug("Create Room Table");
                 CreateTableRequest tableRequest = dynamoDBMapper.generateCreateTableRequest(Room.class);
                 tableRequest.setProvisionedThroughput(new ProvisionedThroughput(5L, 5L));
 
@@ -67,21 +70,12 @@ public class DynamoDBTestConfiguration {
     public void dynamoDBMessageSetup() {
         try {
             ListTablesResult tablesResult = amazonDynamoDB.listTables();
-            System.out.println("TableNames: " + tablesResult.getTableNames());
+            logger.debug("TableNames: " + tablesResult.getTableNames());
             if (!tablesResult.getTableNames().contains("Message")) {
-                System.out.println("Create Message Table");
+                logger.debug("Create Message Table");
                 dynamoDBMapper = new DynamoDBMapper(amazonDynamoDB);
                 CreateTableRequest tableRequest = dynamoDBMapper.generateCreateTableRequest(Message.class);
                 tableRequest.setProvisionedThroughput(new ProvisionedThroughput(5L, 5L));
-
-                tableRequest.getGlobalSecondaryIndexes().forEach(gsi -> {
-                    gsi.setProvisionedThroughput(new ProvisionedThroughput(5L, 5L));
-                    // "Date" is a required attribute for the access pattern using this Global Secondary Index
-                    // ProjectionType.KEYS_ONLY would miss that attribute
-                    // ProjectionType.ALL would work but less efficient than ProjectionType.INCLUDE
-                    gsi.getProjection().setNonKeyAttributes(List.of("Date"));
-                    gsi.getProjection().setProjectionType(ProjectionType.INCLUDE);
-                });
 
                 amazonDynamoDB.createTable(tableRequest);
             }
