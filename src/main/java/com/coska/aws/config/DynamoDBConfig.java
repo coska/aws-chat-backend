@@ -1,4 +1,4 @@
-package com.coska.aws;
+package com.coska.aws.config;
 
 import org.socialsignin.spring.data.dynamodb.repository.config.EnableDynamoDBRepositories;
 import org.springframework.beans.factory.annotation.Value;
