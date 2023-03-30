@@ -2,10 +2,8 @@ package com.coska.aws.config;
 
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
-import com.amazonaws.services.dynamodbv2.model.CreateTableRequest;
-import com.amazonaws.services.dynamodbv2.model.ListTablesResult;
-import com.amazonaws.services.dynamodbv2.model.ProvisionedThroughput;
-import com.amazonaws.services.dynamodbv2.model.ProjectionType;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperTableModel;
+import com.amazonaws.services.dynamodbv2.model.*;
 import com.coska.aws.entity.User;
 import com.coska.aws.entity.Room;
 import com.coska.aws.entity.Message;
@@ -14,6 +12,8 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Configuration
@@ -73,11 +73,46 @@ public class DynamoDBTestConfiguration {
             logger.debug("TableNames: " + tablesResult.getTableNames());
             if (!tablesResult.getTableNames().contains("Message")) {
                 logger.debug("Create Message Table");
-                dynamoDBMapper = new DynamoDBMapper(amazonDynamoDB);
-                CreateTableRequest tableRequest = dynamoDBMapper.generateCreateTableRequest(Message.class);
-                tableRequest.setProvisionedThroughput(new ProvisionedThroughput(5L, 5L));
 
-                amazonDynamoDB.createTable(tableRequest);
+                List<AttributeDefinition> attributeDefinitions = new ArrayList<>();
+                attributeDefinitions.add(new AttributeDefinition("id", ScalarAttributeType.S));
+                attributeDefinitions.add(new AttributeDefinition("roomId", ScalarAttributeType.S));
+                attributeDefinitions.add(new AttributeDefinition("senderId", ScalarAttributeType.S));
+
+                List<KeySchemaElement> keySchema = new ArrayList<>();
+                keySchema.add(new KeySchemaElement("id", KeyType.HASH));
+
+                ProvisionedThroughput provisionedThroughput = new ProvisionedThroughput(5L, 5L);
+
+                CreateTableRequest createTableRequest = dynamoDBMapper.generateCreateTableRequest(Message.class)
+                        .withAttributeDefinitions(attributeDefinitions)
+                        .withKeySchema(keySchema)
+                        .withProvisionedThroughput(provisionedThroughput);
+
+                GlobalSecondaryIndex roomIdIndex = new GlobalSecondaryIndex()
+                        .withIndexName("roomIdIndex")
+                        .withKeySchema(new KeySchemaElement("roomId", KeyType.HASH))
+                        .withProjection(new Projection().withProjectionType(ProjectionType.ALL))
+                        .withProvisionedThroughput(provisionedThroughput);
+
+                GlobalSecondaryIndex senderIdIndex = new GlobalSecondaryIndex()
+                        .withIndexName("senderIdIndex")
+                        .withKeySchema(new KeySchemaElement("senderId", KeyType.HASH))
+                        .withProjection(new Projection().withProjectionType(ProjectionType.ALL))
+                        .withProvisionedThroughput(provisionedThroughput);
+
+                createTableRequest.withGlobalSecondaryIndexes(roomIdIndex, senderIdIndex);
+
+                TableDescription tableDesc = amazonDynamoDB.createTable(createTableRequest).getTableDescription();
+
+                while (!tableDesc.getTableStatus().equals(TableStatus.ACTIVE.toString())) {
+                    try {
+                        Thread.sleep(5000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    tableDesc = amazonDynamoDB.describeTable("Message").getTable();
+                }
             }
         } catch (Exception e) {
             throw new RuntimeException(e);

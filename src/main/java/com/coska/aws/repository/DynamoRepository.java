@@ -4,6 +4,7 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBScanExpression;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
+import com.coska.aws.entity.Message;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -32,7 +33,13 @@ public class DynamoRepository<T> {
 
         return mapper.scan(clazz, scanExpression);
     }
-
+    public List<T> scan(final Class clazz, String pk) {
+        DynamoDBScanExpression scanExpression = new DynamoDBScanExpression();
+        Map<String, AttributeValue> valuesMap = new HashMap<>();
+        valuesMap.put(":val", new AttributeValue().withS(pk));
+        scanExpression.withFilterExpression("roomId = :val").withExpressionAttributeValues(valuesMap);
+        return mapper.scan(clazz, scanExpression);
+    }
     public List<T> findAll(final Class clazz) {
         Map<String, AttributeValue> map = new HashMap<>();
 
@@ -66,6 +73,9 @@ public class DynamoRepository<T> {
         return (T)mapper.load(clazz, pk);
     }
 
+    public T get(final Class clazz, String pk, String sk) {
+        return (T)mapper.load(clazz, pk, sk);
+    }
     public void delete(final Class clazz, final String pk) {
         T found = get(clazz, pk);
         if (found != null)
@@ -74,5 +84,8 @@ public class DynamoRepository<T> {
 
     public void delete(final Class clazz) {
         mapper.delete(clazz);
+    }
+    public List<T> query(final Class clazz , DynamoDBQueryExpression<T> queryExpression) {
+           return mapper.query(clazz,queryExpression);
     }
 }
