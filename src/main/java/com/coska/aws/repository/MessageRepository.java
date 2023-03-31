@@ -22,39 +22,30 @@ public class MessageRepository {
         return dynamoRepository.save(message);
     }
 
-    public List<Message> save(final List<Message> messages){
-        final List<Message> result = new ArrayList<>();
-        for (Message m: messages){
-            result.add(dynamoRepository.save(m));
-        }
-        return result;
-    }
-
     public List<Message> findAll() {
         return dynamoRepository.scan(Message.class);
     }
     public List<Message> findByRoomId(String roomId) {
-        return dynamoRepository.scan(Message.class, roomId);
+        DynamoDBScanExpression scanExpression = new DynamoDBScanExpression();
+        Map<String, AttributeValue> valuesMap = new HashMap<>();
+        valuesMap.put(":val", new AttributeValue().withS(roomId));
+        scanExpression.withFilterExpression("roomId = :val").withExpressionAttributeValues(valuesMap);
+        return dynamoRepository.scan(Message.class, scanExpression);
     }
     public Message get(final String pk) { return  dynamoRepository.get(Message.class, pk); }
-    public Message get(final String pk, String sk) { return  dynamoRepository.get(Message.class, pk, sk); }
+    public Message get(final String messageId, String roomId) {
+        DynamoDBScanExpression scanExpression = new DynamoDBScanExpression();
+        scanExpression.withFilterExpression("roomId = :roomId and id = :id")
+                .withExpressionAttributeValues(
+                        Map.of(":roomId", new AttributeValue().withS(roomId),
+                                ":id", new AttributeValue().withS(messageId)));
+
+        return  dynamoRepository.get(Message.class, scanExpression);
+    }
 
     public Message find(final Message message) { return get(message.getId()); }
 
     public void delete(final String pk) { dynamoRepository.delete(Message.class, pk); }
 
     public void delete(final Message message) { dynamoRepository.delete(Message.class, message.getId()); }
-
-    public List<Message> getMessagesByIndex(final String indexName, final String attributeName, final String attributeValue) {
-        final DynamoDBQueryExpression<Message> queryExpression = new DynamoDBQueryExpression<>();
-        final Message message = new Message();
-        message.setSenderId(attributeValue);
-        queryExpression.withIndexName(indexName)
-                .withConsistentRead(false)
-                .withKeyConditionExpression(attributeName + " = :val")
-                .withExpressionAttributeValues(Collections.singletonMap(":val", new AttributeValue(attributeValue)))
-                .withScanIndexForward(false); // To sort results in descending order of timestamp
-        final List<Message> messages = dynamoRepository.query(Message.class, queryExpression);
-        return messages;
-    }
 }

@@ -3,12 +3,11 @@ package com.coska.aws.repository;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBScanExpression;
+import com.amazonaws.services.dynamodbv2.datamodeling.PaginatedQueryList;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
-import com.coska.aws.entity.Message;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,13 +32,17 @@ public class DynamoRepository<T> {
 
         return mapper.scan(clazz, scanExpression);
     }
-    public List<T> scan(final Class clazz, String pk) {
-        DynamoDBScanExpression scanExpression = new DynamoDBScanExpression();
-        Map<String, AttributeValue> valuesMap = new HashMap<>();
-        valuesMap.put(":val", new AttributeValue().withS(pk));
-        scanExpression.withFilterExpression("roomId = :val").withExpressionAttributeValues(valuesMap);
+    public List<T> scan(final Class clazz, DynamoDBScanExpression scanExpression) {
         return mapper.scan(clazz, scanExpression);
     }
+    public T get(final Class clazz, DynamoDBScanExpression scanExpression) {
+        List<T> result = mapper.scan(clazz, scanExpression);
+        if (result.isEmpty()) {
+            return null;
+        }
+        return result.get(0);
+    }
+
     public List<T> findAll(final Class clazz) {
         Map<String, AttributeValue> map = new HashMap<>();
 
@@ -75,6 +78,14 @@ public class DynamoRepository<T> {
 
     public T get(final Class clazz, String pk, String sk) {
         return (T)mapper.load(clazz, pk, sk);
+    }
+
+    public T get(final Class clazz, DynamoDBQueryExpression<T> queryExpression) {
+        PaginatedQueryList<T> result = mapper.query(clazz, queryExpression);
+        if (result.isEmpty()) {
+            return null;
+        }
+        return result.get(0);
     }
     public void delete(final Class clazz, final String pk) {
         T found = get(clazz, pk);

@@ -8,7 +8,6 @@ import com.coska.aws.mapper.MessageMapper;
 import com.coska.aws.repository.MessageRepository;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -19,9 +18,7 @@ import java.util.stream.Collectors;
 @Service
 public class MessageService {
     private static final Logger logger = LogManager.getLogger(MessageService.class);
-
     private final MessageRepository repository;
-
     private final MessageMapper mapper;
 
     public MessageService(final MessageRepository er, final MessageMapper mapper) {
