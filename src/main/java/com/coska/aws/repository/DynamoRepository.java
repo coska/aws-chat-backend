@@ -3,11 +3,11 @@ package com.coska.aws.repository;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBScanExpression;
+import com.amazonaws.services.dynamodbv2.datamodeling.PaginatedQueryList;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,6 +31,16 @@ public class DynamoRepository<T> {
         DynamoDBScanExpression scanExpression = new DynamoDBScanExpression();
 
         return mapper.scan(clazz, scanExpression);
+    }
+    public List<T> scan(final Class clazz, DynamoDBScanExpression scanExpression) {
+        return mapper.scan(clazz, scanExpression);
+    }
+    public T get(final Class clazz, DynamoDBScanExpression scanExpression) {
+        List<T> result = mapper.scan(clazz, scanExpression);
+        if (result.isEmpty()) {
+            return null;
+        }
+        return result.get(0);
     }
 
     public List<T> findAll(final Class clazz) {
@@ -66,6 +76,17 @@ public class DynamoRepository<T> {
         return (T)mapper.load(clazz, pk);
     }
 
+    public T get(final Class clazz, String pk, String sk) {
+        return (T)mapper.load(clazz, pk, sk);
+    }
+
+    public T get(final Class clazz, DynamoDBQueryExpression<T> queryExpression) {
+        PaginatedQueryList<T> result = mapper.query(clazz, queryExpression);
+        if (result.isEmpty()) {
+            return null;
+        }
+        return result.get(0);
+    }
     public void delete(final Class clazz, final String pk) {
         T found = get(clazz, pk);
         if (found != null)
@@ -74,5 +95,8 @@ public class DynamoRepository<T> {
 
     public void delete(final Class clazz) {
         mapper.delete(clazz);
+    }
+    public List<T> query(final Class clazz , DynamoDBQueryExpression<T> queryExpression) {
+           return mapper.query(clazz,queryExpression);
     }
 }

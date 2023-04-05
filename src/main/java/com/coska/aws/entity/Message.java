@@ -6,10 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.time.LocalDate;
 import java.time.ZonedDateTime;
-import java.util.List;
 
 @AllArgsConstructor
 @Builder
@@ -19,14 +16,8 @@ import java.util.List;
 @SuppressWarnings("unused")
 public class Message {
     // PK
-    @DynamoDBRangeKey(attributeName = "id")
+    @DynamoDBHashKey(attributeName = "id")
     private String id;
-
-    @DynamoDBHashKey(attributeName = "roomId")
-    private String roomId;
-
-    @DynamoDBAttribute(attributeName = "senderId")
-    private String senderId;
 
     @DynamoDBAttribute(attributeName = "payload")
     private String payload;
@@ -39,21 +30,10 @@ public class Message {
     @DynamoDBTyped(DynamoDBMapperFieldModel.DynamoDBAttributeType.N)
     private ZonedDateTime timestamp;
 
-//    @DynamoDBIndexHashKey(attributeName = "GSI_1_PK", globalSecondaryIndexName = "GSI_1")
-//    public String getGSI1PK() {
-//        return roomId;
-//    }
-//
-//    public void setGSI1PK(String pk) {
-//        // intentionally left blank
-//    }
-//
-//    @DynamoDBIndexRangeKey( attributeName = "GSI_1_SK", globalSecondaryIndexName = "GSI_1")
-//    public String getGSI1SK() {
-//        return id;
-//    }
-//
-//    public void setGSI1SK(String sk) {
-//        // intentionally left blank
-//    }
+    // GSI
+    @DynamoDBIndexHashKey(globalSecondaryIndexName = "roomIdIndex", attributeName = "roomId")
+    private String roomId;
+
+    @DynamoDBIndexHashKey(globalSecondaryIndexName = "senderIdIndex", attributeName = "senderId")
+    private String senderId;
 }
