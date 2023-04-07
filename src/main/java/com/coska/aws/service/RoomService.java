@@ -1,6 +1,8 @@
 package com.coska.aws.service;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -10,9 +12,7 @@ import org.springframework.util.StringUtils;
 import com.coska.aws.dto.RoomDto;
 import com.coska.aws.entity.Room;
 import com.coska.aws.mapper.RoomMapper;
-import com.coska.aws.mapper.UserMapper;
 import com.coska.aws.repository.RoomRepository;
-import com.coska.aws.repository.UserRepository;
 import com.coska.aws.exception.ValidationException;
 import com.coska.aws.exception.NotFoundException;
 
@@ -30,6 +30,10 @@ public class RoomService {
     
     public Room save(final Room room) {
         return repository.save(room);
+    }
+    
+    public Room save(final RoomDto roomDto) {
+        return repository.save(mapper.toEntity(roomDto));
     }
 
     public RoomDto create(final RoomDto dto) {
@@ -81,6 +85,11 @@ public class RoomService {
         return mapper.toDto(repository.save(found));
     }
     
+    public List<RoomDto> findAll() {
+        final List<Room> rooms = repository.findAll();
+        return rooms.stream().map(mapper::toDto).collect(Collectors.toList());
+    }   
+    
     public void delete(String roomId) {
         final Room room = repository.get(roomId);
         if (room == null) {
@@ -88,5 +97,6 @@ public class RoomService {
         }
         repository.delete(room);
     }    
+ 
 
 }
