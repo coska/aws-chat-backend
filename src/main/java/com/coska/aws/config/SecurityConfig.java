@@ -6,9 +6,17 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 
+import com.coska.aws.security.MyJwtAuthenticationConverter;
+
+
 @Configuration
 @EnableWebSecurity
-public class CognitoSecurityConfig {
+public class SecurityConfig {
+
+    @Bean
+    MyJwtAuthenticationConverter jwtAuthenticationConverter(){
+        return new MyJwtAuthenticationConverter();
+    }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -23,7 +31,9 @@ public class CognitoSecurityConfig {
         .authorizeHttpRequests(requests -> 
             requests.requestMatchers(permitAllPatterns).permitAll()
             .anyRequest().authenticated())
-        .oauth2ResourceServer().jwt();
+        .oauth2ResourceServer().jwt()
+        .jwtAuthenticationConverter(jwtAuthenticationConverter());
+
         return http.build();
     }
 
