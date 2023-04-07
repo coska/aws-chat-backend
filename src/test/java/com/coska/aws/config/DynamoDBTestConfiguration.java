@@ -82,13 +82,20 @@ public class DynamoDBTestConfiguration {
                 List<KeySchemaElement> keySchema = new ArrayList<>();
                 keySchema.add(new KeySchemaElement("id", KeyType.HASH));
 
-                ProvisionedThroughput provisionedThroughput = new ProvisionedThroughput(5L, 5L);
+                final ProvisionedThroughput provisionedThroughput = new ProvisionedThroughput(5L, 5L);
 
                 CreateTableRequest createTableRequest = dynamoDBMapper.generateCreateTableRequest(Message.class)
                         .withAttributeDefinitions(attributeDefinitions)
                         .withKeySchema(keySchema)
                         .withProvisionedThroughput(provisionedThroughput);
-
+                // At this moment, Message.class already defined globalSecondaryIndexes.
+                // So, we do not need to add globalSecondaryIndexes
+                logger.debug(" Secondary Index size(0) =  " + createTableRequest.getGlobalSecondaryIndexes().size());
+                for ( GlobalSecondaryIndex secIdx : createTableRequest.getGlobalSecondaryIndexes()) {
+                	logger.debug(" secIdx.name = " + secIdx.getIndexName());
+                 	secIdx.setProvisionedThroughput(provisionedThroughput);
+                }                
+                /*
                 GlobalSecondaryIndex roomIdIndex = new GlobalSecondaryIndex()
                         .withIndexName("roomIdIndex")
                         .withKeySchema(new KeySchemaElement("roomId", KeyType.HASH))
@@ -103,6 +110,13 @@ public class DynamoDBTestConfiguration {
 
                 createTableRequest.withGlobalSecondaryIndexes(roomIdIndex, senderIdIndex);
 
+                for ( GlobalSecondaryIndex secIdx : createTableRequest.getGlobalSecondaryIndexes()) {
+                	logger.debug(" secIdx.name = " + secIdx.getIndexName());
+                	
+                	secIdx.setProvisionedThroughput(provisionedThroughput);
+                }
+                */
+               
                 TableDescription tableDesc = amazonDynamoDB.createTable(createTableRequest).getTableDescription();
 
                 while (!tableDesc.getTableStatus().equals(TableStatus.ACTIVE.toString())) {
