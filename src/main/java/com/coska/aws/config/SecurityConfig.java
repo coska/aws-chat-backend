@@ -4,6 +4,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
 
 import com.coska.aws.security.MyJwtAuthenticationConverter;
@@ -13,9 +14,17 @@ import com.coska.aws.security.MyJwtAuthenticationConverter;
 @EnableWebSecurity
 public class SecurityConfig {
 
+    private static final String ROLES_CLAIM_NAME="cognito:groups";
+    private static final String ROLE_PREFIX = "";
+
     @Bean
     MyJwtAuthenticationConverter jwtAuthenticationConverter(){
-        return new MyJwtAuthenticationConverter();
+        var jwtGrantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
+        jwtGrantedAuthoritiesConverter.setAuthoritiesClaimName(ROLES_CLAIM_NAME);
+        jwtGrantedAuthoritiesConverter.setAuthorityPrefix(ROLE_PREFIX);
+        var myJwtAuthenticationConverter =  new MyJwtAuthenticationConverter();
+        myJwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(jwtGrantedAuthoritiesConverter);
+        return myJwtAuthenticationConverter;
     }
 
     @Bean
@@ -25,7 +34,8 @@ public class SecurityConfig {
             "/swagger-ui/**",
             "/coskachat-api-docs/**",
             "/coskachat-documentation",
-            "/example/employees"
+            "/example/employees/**",
+            "/ping"
         };
         http.cors().and().csrf().disable()
         .authorizeHttpRequests(requests -> 
