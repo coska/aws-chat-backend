@@ -22,4 +22,10 @@ public class SecurityTestControllerTest {
         .andExpect(status().isOk())
         .andExpect(content().string("test@test.com"));
     }
+
+    @Test
+    void testGetSecurityTest_unauthorized() throws Exception {
+        mvc.perform(get("/example/security"))
+        .andExpect(status().isUnauthorized());
+    }
 }
