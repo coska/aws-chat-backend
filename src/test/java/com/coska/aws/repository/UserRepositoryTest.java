@@ -45,8 +45,8 @@ public class UserRepositoryTest {
 
     @Test
     void userCRUD() {
-        System.out.println("Test userCRUD");
-
+        logger.debug("Test userCRUD");
+        
         List<User> users = new ArrayList<>();
         // Test save()
         for(int i = 0; i < 3; i++) {

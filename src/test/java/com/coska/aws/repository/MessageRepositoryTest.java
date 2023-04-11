@@ -70,7 +70,7 @@ public class MessageRepositoryTest {
 
         // Test get()
         for(int i = 0; i < 3; i++) {
-            Message found = repository.get("message" + i);
+            Message found = repository.get("Message" + i);
             assertNotNull(found);
             logger.debug("Get Message: " + found);
         }
