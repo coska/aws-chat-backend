@@ -68,7 +68,7 @@
 		<dependency>
 			<groupId>org.springdoc</groupId>
 			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-			<version>2.0.3</version>
+			<version>2.0.4</version>
 		</dependency>
 		<!-- Object Mapper  -->
 		<dependency>
@@ -77,6 +77,13 @@
     		<version>2.14.0</version>
 		</dependency>		
 		
+		<!-- for Google Dynamic DNS -->
+		<dependency>
+			<groupId>com.squareup.okhttp3</groupId>
+			<artifactId>okhttp</artifactId>
+			<version>4.10.0</version>
+		</dependency>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
