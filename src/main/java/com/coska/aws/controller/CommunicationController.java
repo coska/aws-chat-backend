@@ -1,30 +1,40 @@
 package com.coska.aws.controller;
 
 import java.util.Calendar;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.codec.ServerSentEvent;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
-import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.coska.aws.dto.MessageBean;
+import com.coska.aws.service.CommunicationService;
+
+import reactor.core.publisher.Flux;
 
 @RestController
-public class SokcetController {
-    
+@CrossOrigin(originPatterns = "*", allowedHeaders = "*", allowCredentials = "true")
+public class CommunicationController {
+
     @Autowired
     private SimpMessagingTemplate simpMessagingTemplate;
-    
+    @Autowired
+    private CommunicationService communicationService;
+
     @MessageMapping("/message")
-    //@SendTo("/subscribe/room")
+    // @SendTo("/subscribe/room")
     public void send(@Payload MessageBean message) {
         message.setTime(Calendar.getInstance());
         simpMessagingTemplate.convertAndSend("/subscribe/room/" + message.getRoomId(), message);
-        System.out.println(message);
     }
 
     @GetMapping("/message/test")
@@ -37,6 +47,18 @@ public class SokcetController {
                 .build();
         System.out.println(msg);
         simpMessagingTemplate.convertAndSend("/subscribe/room/" + roomId, msg);
+    }
+
+    @PostMapping("/sse/rooms/{roomId}/users/{name}")
+    public String addUser(@PathVariable("roomId") String roomId, @PathVariable("name") String name) {
+        communicationService.addUser(roomId, name);
+        return "User " + name + " added !";
+    }
+
+    @GetMapping("/sse/rooms/{roomId}/users")
+    public Flux<ServerSentEvent<List<String>>> streamUsers(@PathVariable("roomId") String roomId) {
+        System.out.println("users ==============================================");
+        return communicationService.getUsers(roomId);
     }
 
 }

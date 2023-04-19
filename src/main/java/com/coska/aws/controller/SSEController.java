@@ -21,8 +21,8 @@ import reactor.core.publisher.Flux;
 @RequestMapping("/sse-server")
 @CrossOrigin(originPatterns = "*", allowedHeaders = "*", allowCredentials = "true")
 public class SSEController {
-  
-    @Autowired
+
+	@Autowired
 	private SSEService sseService;
 
 	/**
@@ -57,6 +57,7 @@ public class SSEController {
 	 */
 	@GetMapping("/users")
 	public Flux<ServerSentEvent<List<String>>> streamUsers(@RequestParam("name") String name) {
+		System.out.println("users ==============================================");
 		return sseService.getUsers(name);
 	}
 
@@ -81,5 +82,5 @@ public class SSEController {
 	public Flux<ServerSentEvent<List<Message>>> streamMessages(@RequestParam("name") String name) {
 		return sseService.getAllUserMessages(name);
 	}
-	
+
 }
