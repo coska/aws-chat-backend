@@ -1,15 +1,18 @@
 package com.coska.aws.config;
 
+import io.swagger.v3.oas.models.security.SecurityScheme;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
+import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.servers.Server;
 
 @Configuration
@@ -45,6 +48,17 @@ public class OpenAPIConfig {
                 .description("This API exposes endpoints to manage Coska Chat.").termsOfService("https://www.coskachat.com/terms")
                 .license(mitLicense);
 
-        return new OpenAPI().info(info).servers(List.of(devServer, prodServer));
+        SecurityScheme securityScheme = new SecurityScheme()
+                .name("jwt")
+                .type(SecurityScheme.Type.HTTP)
+                .in(SecurityScheme.In.HEADER)
+                .bearerFormat("JWT")
+                .scheme("bearer");
+
+        return new OpenAPI()
+        .info(info)
+        .addSecurityItem(new SecurityRequirement().addList("jwt"))
+        .components(new Components().addSecuritySchemes("jwt", securityScheme))
+        .servers(List.of(devServer, prodServer));
     }
 }
