@@ -57,8 +57,12 @@ public class CommunicationController {
 
     @GetMapping("/sse/rooms/{roomId}/users")
     public Flux<ServerSentEvent<List<String>>> streamUsers(@PathVariable("roomId") String roomId) {
-        System.out.println("users ==============================================");
         return communicationService.getUsers(roomId);
     }
 
+    @GetMapping("/v1/chat/sse/rooms")
+    public Flux<ServerSentEvent<List<String>>> streamRoomss() {
+        return communicationService.getRooms();
+    }
+    
 }

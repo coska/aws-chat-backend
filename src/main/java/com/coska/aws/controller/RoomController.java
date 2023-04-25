@@ -6,6 +6,7 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.coska.aws.dto.RoomDto;
+import com.coska.aws.service.CommunicationService;
 import com.coska.aws.service.RoomService;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -30,10 +32,13 @@ public class RoomController {
 
     private static final Logger logger = LogManager.getLogger(UserController.class);
     private final RoomService service;
-    
-    public RoomController(RoomService service ) {
-    	this.service = service;
+
+    public RoomController(RoomService service) {
+        this.service = service;
     }
+
+    @Autowired
+    private CommunicationService communicationService;
     
     @PostMapping()
     public @ResponseBody RoomDto create(final HttpServletRequest request, @RequestBody final RoomDto dto) {
@@ -41,12 +46,14 @@ public class RoomController {
         if (StringUtils.isNotEmpty(str)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, str);
         }
+        RoomDto rtnDto = service.create(dto);
+        communicationService.addRoom(rtnDto);
+        return rtnDto;
+    }
 
-        return service.create(dto);
-    }    
-    
     @PutMapping()
-    public @ResponseBody RoomDto update(final HttpServletRequest request, final Principal principal, @RequestBody final RoomDto dto) {
+    public @ResponseBody RoomDto update(final HttpServletRequest request, final Principal principal,
+            @RequestBody final RoomDto dto) {
         final String str = dto.validate();
         if (StringUtils.isNotEmpty(str)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, str);
@@ -57,28 +64,25 @@ public class RoomController {
 
     @GetMapping("/{id}")
     public ResponseEntity<RoomDto> findById(final HttpServletRequest request, @PathVariable("id") final String id) {
-        if (!org.springframework.util.StringUtils.hasLength(id))
-        {
+        if (!org.springframework.util.StringUtils.hasLength(id)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Id Not Found");
         }
 
         return new ResponseEntity<>(service.findById(id), HttpStatus.OK);
     }
-    
+
     @GetMapping
     public ResponseEntity<List<RoomDto>> findAll(final HttpServletRequest request) {
         return new ResponseEntity<>(service.findAll(), HttpStatus.OK);
-    }    
-    
+    }
+
     @DeleteMapping("/{id}")
-    public @ResponseBody void delete(final HttpServletRequest request, @PathVariable("id") final String id)    {
-        if (!org.springframework.util.StringUtils.hasLength(id))
-        {
+    public @ResponseBody void delete(final HttpServletRequest request, @PathVariable("id") final String id) {
+        if (!org.springframework.util.StringUtils.hasLength(id)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Id Not Found");
         }
 
         service.delete(id);
-    }    
-    
-    
+    }
+
 }

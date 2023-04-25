@@ -35,7 +35,8 @@ public class SecurityConfig {
             "/coskachat-api-docs/**",
             "/coskachat-documentation",
             "/example/employees/**",
-            "/ping"
+            "/ping",
+            "/v1/**"
         };
         http.cors().and().csrf().disable()
         .authorizeHttpRequests(requests -> 

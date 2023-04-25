@@ -6,10 +6,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.codec.ServerSentEvent;
 import org.springframework.stereotype.Service;
 
 import com.coska.aws.dto.MessageBean;
+import com.coska.aws.dto.RoomDto;
 
 import reactor.core.publisher.Flux;
 
@@ -17,6 +19,10 @@ import reactor.core.publisher.Flux;
 public class CommunicationService {
 	private static final String NO_MESSAGE_TEXT = "No message yet !";
 
+	@Autowired
+	RoomService service;
+
+	List<String> rooms = new ArrayList<String>();
 	Map<String, List<String>> roomUsers = new HashMap<String, List<String>>();
 	Map<String, List<MessageBean>> rommMessages = new HashMap<String, List<MessageBean>>();
 
@@ -51,6 +57,23 @@ public class CommunicationService {
 
 		return Flux.interval(Duration.ofSeconds(1)).map(sequence -> ServerSentEvent.<List<String>>builder()
 				.id(String.valueOf(sequence)).event("user-list-event").data(new ArrayList<>()).build());
+	}
+
+	public Flux<ServerSentEvent<List<String>>> getRooms() {
+		if (rooms.size() == 0) {
+			List<RoomDto> rooms_ = service.findAll();
+			for (RoomDto room : rooms_) {
+				rooms.add(room.getTitle());
+			}
+		}
+		return Flux.interval(Duration.ofSeconds(1))
+				.map(sequence -> ServerSentEvent.<List<String>>builder().id(String.valueOf(sequence))
+						.event("room-list-event").data(rooms).build());
+
+	}
+	
+	public void addRoom(RoomDto dto) {
+		rooms.add(dto.getTitle());
 	}
 
 }
