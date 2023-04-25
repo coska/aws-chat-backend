@@ -19,8 +19,17 @@ import reactor.core.publisher.Flux;
 public class CommunicationService {
 	private static final String NO_MESSAGE_TEXT = "No message yet !";
 
-	@Autowired
-	RoomService service;
+    private final RoomService service;
+
+	public CommunicationService(RoomService service) {
+        this.service = service;
+		if (rooms.size() == 0) {
+			List<RoomDto> rooms_ = service.findAll();
+			for (RoomDto room : rooms_) {
+				rooms.add(room.getTitle());
+			}
+		}
+	}
 
 	List<String> rooms = new ArrayList<String>();
 	Map<String, List<String>> roomUsers = new HashMap<String, List<String>>();
@@ -60,12 +69,6 @@ public class CommunicationService {
 	}
 
 	public Flux<ServerSentEvent<List<String>>> getRooms() {
-		if (rooms.size() == 0) {
-			List<RoomDto> rooms_ = service.findAll();
-			for (RoomDto room : rooms_) {
-				rooms.add(room.getTitle());
-			}
-		}
 		return Flux.interval(Duration.ofSeconds(1))
 				.map(sequence -> ServerSentEvent.<List<String>>builder().id(String.valueOf(sequence))
 						.event("room-list-event").data(rooms).build());
