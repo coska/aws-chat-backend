@@ -78,6 +78,10 @@ public class MessageRepositoryTest {
         // Test findAll()
         List<Message> messages1 =  repository.findAll();
         assertEquals(3, messages1.size());
+
+        List<Message> messages2 =  repository.findByRoomId("RoomId1");
+        assertEquals(1, messages2.size());
+
         for(Message message : messages1) {
             logger.debug("findAll Message: " + message);
             repository.delete(message.getId());

@@ -2,6 +2,7 @@ package com.coska.aws.controller;
 
 import java.security.Principal;
 import java.util.List;
+import java.util.UUID;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -42,6 +43,10 @@ public class RoomController {
     
     @PostMapping()
     public @ResponseBody RoomDto create(final HttpServletRequest request, @RequestBody final RoomDto dto) {
+        
+        UUID uuid = UUID.randomUUID();
+
+        dto.setId(uuid.toString());
         String str = dto.validate();
         if (StringUtils.isNotEmpty(str)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, str);

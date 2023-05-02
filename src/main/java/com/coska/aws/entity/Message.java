@@ -25,15 +25,18 @@ public class Message {
     @DynamoDBAttribute(attributeName = "type")
     private String type;
 
-    @DynamoDBAttribute(attributeName = "timestamp")
-    @DynamoDBTypeConverted(converter = ZonedDateTimeConverter.class)
-    @DynamoDBTyped(DynamoDBMapperFieldModel.DynamoDBAttributeType.N)
-    private ZonedDateTime timestamp;
-
     // GSI
     @DynamoDBIndexHashKey(globalSecondaryIndexName = "roomIdIndex", attributeName = "roomId")
     private String roomId;
 
     @DynamoDBIndexHashKey(globalSecondaryIndexName = "senderIdIndex", attributeName = "senderId")
     private String senderId;
+    
+    @DynamoDBAttribute(attributeName = "senderName")
+    private String senderName;
+
+    @DynamoDBAttribute(attributeName = "timestamp")
+    @DynamoDBTypeConverted(converter = ZonedDateTimeConverter.class)
+    @DynamoDBTyped(DynamoDBMapperFieldModel.DynamoDBAttributeType.N)
+    private ZonedDateTime timestamp;
 }
