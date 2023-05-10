@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.util.Objects;
 
 
-@Component
+// @Component
 public class DynamicDnsScheduler {
 
     private static final String GOOGLE_DOMAINS_DDNS_API_URL = "https://domains.google.com/nic/update";

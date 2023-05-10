@@ -19,8 +19,7 @@ public class ChatGPTService implements ChatBotService {
     public static final String MODEL_NAME = "gpt-3.5-turbo";
     public static final float MODEL_TEMPERATURE = 0.7F;
     public static final String CHAT_API_URL = "https://api.openai.com/v1/engines/davinci/completions";
-    public static final String TEST_KEY = "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";
-
+    public static final String TEST_KEY = "";
 
     private static final Logger logger = LogManager.getLogger(ChatGPTService.class);
     private final BotMessageMapper mapper = new BotMessageMapper() {
@@ -43,7 +42,7 @@ public class ChatGPTService implements ChatBotService {
         public String toJson(BotMessage msg) throws JsonProcessingException {
             return null;
         }
-    }
+    };
 
     public ChatGPTService() {
     }
@@ -67,9 +66,10 @@ public class ChatGPTService implements ChatBotService {
         Response response = client.newCall(request).execute();
         try {
             String responseBody = response.body().string();
-            BotMessage bm = mapper.readValue(responseBody, BotMessage.class);
-            Message msgResult = toMessage(bm);
-            return toMessage(bm);
+            return mapper.fromJson(responseBody);
+            //BotMessage bm = mapper.fromMessage(msg);
+            //Message msgResult = toMessage(bm);
+            // return toMessage(bm);
         }
         finally {
             response.close();
