@@ -32,8 +32,8 @@ public class SecurityConfig {
         String[] permitAllPatterns = {
             "/actuator/**",
             "/swagger-ui/**",
-            "/coskachat-api-docs/**",
-            "/coskachat-documentation",
+            "/chat-coska-com-api-docs/**",
+            "/chat-coska-com-api-documentation",
             "/example/employees/**",
             "/ping"
         };
