@@ -4,13 +4,11 @@ import com.coska.aws.entity.BotMessage;
 import com.coska.aws.entity.Message;
 import com.coska.aws.mapper.BotMessageMapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import okhttp3.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.UUID;
