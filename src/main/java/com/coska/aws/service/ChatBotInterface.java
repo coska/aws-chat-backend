@@ -5,7 +5,7 @@ import com.coska.aws.entity.Message;
 
 import java.io.IOException;
 
-public interface ChatBotService {
+public interface ChatBotInterface {
 
-    Message askQuestion(BotMessage msg) throws IOException;
+    Message askQuestion(BotMessage msg) throws Exception;
 }

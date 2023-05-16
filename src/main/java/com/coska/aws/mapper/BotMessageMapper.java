@@ -1,12 +1,9 @@
 package com.coska.aws.mapper;
 
-import com.coska.aws.dto.MessageDto;
 import com.coska.aws.entity.BotMessage;
 import com.coska.aws.entity.Message;
-import com.coska.aws.service.ChatBotService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.mapstruct.Mapper;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
