@@ -1,4 +1,4 @@
-name: Dockernize Coska chat backend service and pust the image to AWS ECR repository
+name: Dockernize Coska chat backend service and push the image to AWS ECR repository
 
 on:
   workflow_dispatch:
@@ -38,6 +38,7 @@ jobs:
           # for SSL certificate
           coska_com_p12_store_password: ${{ secrets.COSKA_COM_P12_STORE_PASSWORD }}
           coska_com_p12_key_alias: ${{ secrets.COSKA_COM_P12_KEY_ALIAS }}
+          coska_com_p12_path: ${{ secrets.COSKA_COM_P12_PATH }}
 
       - name: Login to Amazon ECR
         id: login-ecr
@@ -50,6 +51,7 @@ jobs:
         run: |
           echo ${{ github.workspace }}
           echo $GITHUB_WORKSPACE
+          aws s3 cp s3://coska-chat-backend/coska.com.p12 cert/
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
