@@ -22,6 +22,7 @@ import lombok.Setter;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class RoomDto {
     private String id;
+    private String ownerId;
     private String title;
     private String lastMessage;
     private String lastSentUserId;

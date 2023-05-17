@@ -60,30 +60,10 @@ public class ChatGPTService implements ChatBotInterface {
     @Override
     public Message askQuestion(BotMessage botMessage) throws Exception {
 
-        //        OkHttpClient client = new OkHttpClient();
-        //        String json = mapper.toJson(botMessage);
-        //
-        //        RequestBody requestBody = RequestBody.create(MediaType.parse("application/json"), json);
-        //        Request request = new Request.Builder()
-        //                .url(CHAT_API_URL)
-        //                .header("Authorization", gptKey)
-        //                .post(requestBody)
-        //                .build();
-        //
-        //        try (Response response = client.newCall(request).execute()) {
-        //            String responseBody = response.body().string();
-        //            return mapper.fromJson(responseBody);
-        //            //BotMessage bm = mapper.fromMessage(msg);
-        //            //Message msgResult = toMessage(bm);
-        //            // return toMessage(bm);
-        //        }
-        //        return null;
-
         // (tk) TODO get room creator -> get creator's gptKey instead lastUserId
-
         String roomId = botMessage.getRoomId();
         var room = roomService.findById(roomId);
-        var userId = room.getLastSentUserId();
+        var userId = room.getOwnerId();
         var user = userService.findById(userId);
         var gptKey = user.getGptKey();
 
