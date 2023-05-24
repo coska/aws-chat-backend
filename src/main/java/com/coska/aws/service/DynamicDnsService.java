@@ -1,4 +1,4 @@
-package com.coska.aws.controller;
+package com.coska.aws.service;
 
 import okhttp3.Credentials;
 import okhttp3.OkHttpClient;
@@ -6,14 +6,13 @@ import okhttp3.Request;
 import okhttp3.Response;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.Objects;
 
 
-@Component
-public class DynamicDnsScheduler {
+// @Component
+public class DynamicDnsService {
 
     private static final String GOOGLE_DOMAINS_DDNS_API_URL = "https://domains.google.com/nic/update";
     private final OkHttpClient httpClient = new OkHttpClient();
