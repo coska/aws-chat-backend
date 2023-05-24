@@ -54,8 +54,8 @@ jobs:
         run: |
           echo ${{ github.workspace }}
           echo $GITHUB_WORKSPACE
-          mkdir -p cert
-          aws s3 cp s3://coska-chat-backend/coska.com.p12 cert/
+          mkdir -p /applications/cert
+          aws s3 cp s3://coska-chat-backend/coska.com.p12 /applications/cert/
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
