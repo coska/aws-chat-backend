@@ -19,6 +19,23 @@
 		<lombok.mapstruct.binding.version>0.2.0</lombok.mapstruct.binding.version>
 		<lombok.version>1.18.24</lombok.version>
 	</properties>
+    <profiles>
+            <profile>
+                <id>dev</id>
+                <properties>
+                    <activatedProperties>dev</activatedProperties>
+                </properties>
+                <activation>
+                    <activeByDefault>true</activeByDefault>
+                </activation>
+            </profile>
+            <profile>
+                <id>prod</id>
+                <properties>
+                    <activatedProperties>prod</activatedProperties>
+                </properties>
+            </profile>
+    </profiles>
 	<dependencies>
 
 		<!--		<dependency>-->
