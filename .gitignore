@@ -32,3 +32,6 @@ build/
 ### VS Code ###
 .vscode/
 src/main/resources/config/application.properties
+*.jks
+*.p12
+*.pem
