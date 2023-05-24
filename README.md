@@ -4,7 +4,7 @@
 
 http://localhost:8080/swagger-ui/index.html
 
-# 1. UserControler ("/v1/chat/users/")
+# 1. UserController ("/v1/chat/users/")
 
 1.1 GET "/v1/chat/users/{id}" - 하나의 user 정보
 
