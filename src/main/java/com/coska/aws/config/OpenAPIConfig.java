@@ -35,11 +35,11 @@ public class OpenAPIConfig {
         prodServer.setDescription("Server URL in Production environment");
 
         Contact contact = new Contact();
-        contact.setEmail("admin@coska.chat.com");
-        contact.setName("CoskaChat");
-        contact.setUrl("https://www.coskachat.com");
+        contact.setEmail("coska21@coska.com");
+        contact.setName("Chat Coska");
+        contact.setUrl("https://chat.coska.com");
 
-        License mitLicense = new License().name("MIT License").url("https://www.coskachat.com/licenses/mit/");
+        License mitLicense = new License().name("MIT License").url("https://chat.coska.com/licenses/mit/");
 
         Info info = new Info()
                 .title("Coska Chat API")

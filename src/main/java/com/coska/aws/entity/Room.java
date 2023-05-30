@@ -28,8 +28,5 @@ public class Room {
     private String lastSentUserId;
 
     @DynamoDBAttribute(attributeName = "participants")
-//    public List<String> getParticipants() {
-//        return participants;
-//    }
     private List<String> participants;
 }
