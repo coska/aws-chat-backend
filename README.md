@@ -132,15 +132,25 @@ Timelines and Documents
 # DEV Iterations / Implementations 
 
 > Mar. 7th 2023: Implementations #1
+
 > Mar. 14th 2023: Implementations #2
+
 > Mar. 21st 2023: Implementations #3
+
 > Mar. 28th 2023: Implementations #4
+
 > Apr. 18th 2023: Implementations #5
+
 > Apr. 25th 2023: Implementations #6
+
 > May. 9th 2023: Implementations #7
+
 > May. 16th 2023: Implementations #8
+
 > May. 23rd 2023: Implementations #9
+
 > May. 30th 2023: Implementations #10
+
 
 
 # Initial Public Release
